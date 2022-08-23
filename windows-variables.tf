@@ -36,4 +36,5 @@ variable "windows_instance_name" {
 variable "app_environment" {
   type        = string
   description = "Application environment"
+  default     = "Dev"
 }

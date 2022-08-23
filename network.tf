@@ -1,13 +1,15 @@
+/* 
 resource "aws_internet_gateway" "dmacrae-igw" {
-  vpc_id = lookup(var.awsprops, "vpc")
+  vpc_id = aws_vpc.this.id
 
   tags = {
     Name = "dmacrae-igw"
   }
 }
 
-resource "aws_route_table" "dmacrae-public-crt" {
-  vpc_id = lookup(var.awsprops, "vpc")
+ 
+ resource "aws_route_table" "dmacrae-public-crt" {
+  vpc_id = aws_vpc.this.id
 
   route {
     //associated subnet can reach everywhere
@@ -28,7 +30,7 @@ resource "aws_route_table_association" "dmacrae-crta-public-subnet-1" {
 }
 
 resource "aws_subnet" "dmacrae-subnet-public-1" {
-  vpc_id                  = lookup(var.awsprops, "vpc")
+  vpc_id                  = aws_vpc.this.id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = "true" //it makes this a public subnet
   availability_zone       = "eu-west-2a"
@@ -36,3 +38,4 @@ resource "aws_subnet" "dmacrae-subnet-public-1" {
     Name = "dmacrae-subnet-public-1"
   }
 }
+*/

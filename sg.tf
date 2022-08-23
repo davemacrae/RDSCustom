@@ -1,7 +1,7 @@
 resource "aws_security_group" "aws-windows-sg" {
   name        = "dmacrae-windows-sg"
   description = "Allow incoming connections"
-  vpc_id      = lookup(var.awsprops, "vpc")
+  vpc_id      = aws_vpc.this.id
   ingress {
     from_port   = 80
     to_port     = 80
@@ -29,7 +29,7 @@ resource "aws_security_group" "aws-windows-sg" {
 
 resource "aws_security_group" "aws-linux-sg" {
 
-  vpc_id      = lookup(var.awsprops, "vpc")
+  vpc_id      = aws_vpc.this.id
   name        = "dmacrae-linux-sg"
   description = "Allow only SSH my ip"
   egress {
@@ -63,7 +63,7 @@ resource "aws_security_group" "aws-linux-sg" {
 
 resource "aws_security_group" "private-linux-sg" {
 
-  vpc_id      = lookup(var.awsprops, "vpc")
+  vpc_id      = aws_vpc.this.id
   name        = "dmacrae-private-linux-sg"
   description = "Allow only SSH my ip"
   egress {

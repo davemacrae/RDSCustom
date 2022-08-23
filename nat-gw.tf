@@ -2,7 +2,7 @@
 
 resource "aws_nat_gateway" "default" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.dmacrae-subnet-public-1.id
+  subnet_id     = aws_subnet.public.id
 
   tags = {
     Name = "dmacrae - Nat GW"
@@ -19,8 +19,7 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_route" "r" {
-  route_table_id            = var.private-rt
+  route_table_id            = aws_route_table.private-rt.id
   destination_cidr_block    = "0.0.0.0/0"
   nat_gateway_id = aws_nat_gateway.default.id
 }
-

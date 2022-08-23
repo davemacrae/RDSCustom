@@ -1,12 +1,12 @@
 resource "aws_instance" "linux-ec2" {
-  ami                         = lookup(var.awsprops, "ami")
-  instance_type               = lookup(var.awsprops, "itype")
-  subnet_id                   = aws_subnet.dmacrae-subnet-public-1.id
-  associate_public_ip_address = lookup(var.awsprops, "publicip")
+  ami                         = data.aws_ami.amzLinux.id
+  instance_type               = var.itype
+  subnet_id                   = aws_subnet.public.id
+  associate_public_ip_address = true
 
   # Security Group
   vpc_security_group_ids = [aws_security_group.aws-linux-sg.id]
-
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   # the Public SSH key
   key_name = aws_key_pair.key_pair.key_name
 
@@ -29,25 +29,33 @@ resource "aws_instance" "linux-ec2" {
     Name  = "dmacrae linux - pub"
   }
 
-  user_data = file("${path.module}/script.sh")
+  user_data_replace_on_change = true
+  user_data = templatefile("${path.module}/script.sh",
+    {
+      access_key_name = aws_ssm_parameter.access_key.name
+      secret_key_name = aws_ssm_parameter.secret_key.name
+      passphrase_name = aws_ssm_parameter.passphrase.name
+  })
 }
 
+/* 
 resource "aws_iam_instance_profile" "test_profile" {
   name = "test_profile"
   role = "AWSRDSCustomInstanceRoleForRdsCustomInstance"
 
-}
+} 
+*/
 
 resource "aws_instance" "private-linux-ec2" {
-  ami                         = lookup(var.awsprops, "ami")
-  instance_type               = lookup(var.awsprops, "itype")
-  subnet_id                   = var.private-sn
+  ami                         = data.aws_ami.amzLinux.id
+  instance_type               = var.itype
+  subnet_id                   = aws_subnet.private.id
   associate_public_ip_address = false
 
   # Security Group
   # vpc_security_group_ids = [aws_security_group.private-linux-sg.id]
-  vpc_security_group_ids = ["sg-0912bbc9564da6b0b"]
-  iam_instance_profile = aws_iam_instance_profile.test_profile.id
+  vpc_security_group_ids = [aws_security_group.private-linux-sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
 
   # the Public SSH key
   key_name = aws_key_pair.key_pair.key_name
@@ -64,10 +72,15 @@ resource "aws_instance" "private-linux-ec2" {
     Name  = "dmacrae linux - priv"
   }
 
-  user_data = file("${path.module}/script-priv.sh")
+  user_data_replace_on_change = true
+  user_data = templatefile("${path.module}/script-priv.sh",
+    {
+      access_key_name = aws_ssm_parameter.access_key.name
+      secret_key_name = aws_ssm_parameter.secret_key.name
+      passphrase_name = aws_ssm_parameter.passphrase.name
+  })
 }
 
 variable "EC2_USER" {
   default = "ec2-user"
 }
-

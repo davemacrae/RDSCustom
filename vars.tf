@@ -2,10 +2,6 @@ variable "private-rt" {
   default = "rtb-0e27dc50be9e6b738"
 }
 
-variable "private-sn" {
-  default = "subnet-0ef38413873894c8d"
-}
-
 variable "profile" {
   description = "AWS Profile"
   default     = "default"
@@ -27,3 +23,29 @@ variable "subnet_cidrs" {
   default     = []
 }
 
+locals {
+  account_id = aws_vpc.this.owner_id
+  # account_id = "889772146711"
+}
+
+variable "itype" {
+  default = "t3.micro"
+}
+
+variable "access_key" {
+  type      = string
+  default   = ""
+  sensitive = true
+}
+
+variable "secret_key" {
+  type      = string
+  default   = ""
+  sensitive = true
+}
+
+variable "passphrase" {
+  type      = string
+  default   = ""
+  sensitive = true
+}
