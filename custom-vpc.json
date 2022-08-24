@@ -1,0 +1,175 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "PrivateVpc": {
+      "Type": "AWS::EC2::VPC::Id",
+      "Description": "Private VPC Id to use for RDS Custom DB Instances"
+    },
+    "PrivateSubnets": {
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "Description": "Private Subnets to use for RDS Custom DB Instances"
+    },
+    "RouteTable": {
+      "Type": "String",
+      "Description": "Route Table that must be associated with the PrivateSubnets and used by S3 VPC Endpoint",
+      "AllowedPattern": "rtb-[0-9a-z]+"
+    }
+  },
+  "Resources": {
+    "DBSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupName": "rds-custom-private",
+        "DBSubnetGroupDescription": "RDS Custom Private Network",
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        }
+      }
+    },
+    "vpceS3": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "RouteTableIds": [
+          {
+            "Ref": "RouteTable"
+          }
+        ],
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.s3"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceEC2": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.ec2"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceEC2Messages": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.ec2messages"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceMonitoring": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.monitoring"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceSSM": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.ssm"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceSSMMessages": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.ssmmessages"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceLogs": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.logs"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceEvents": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.events"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    },
+    "vpceSecretsManager": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "VpcEndpointType": "Interface",
+        "PrivateDnsEnabled": true,
+        "SubnetIds": {
+          "Ref": "PrivateSubnets"
+        },
+        "ServiceName": {
+          "Fn::Sub": "com.amazonaws.${AWS::Region}.secretsmanager"
+        },
+        "VpcId": {
+          "Ref": "PrivateVpc"
+        }
+      }
+    }
+  },
+  "Outputs": {}
+}

@@ -49,7 +49,7 @@ resource "aws_iam_instance_profile" "test_profile" {
 resource "aws_instance" "private-linux-ec2" {
   ami                         = data.aws_ami.amzLinux.id
   instance_type               = var.itype
-  subnet_id                   = aws_subnet.private.id
+  subnet_id                   = aws_subnet.private.1.id
   associate_public_ip_address = false
 
   # Security Group

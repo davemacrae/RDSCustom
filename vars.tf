@@ -1,7 +1,3 @@
-variable "private-rt" {
-  default = "rtb-0e27dc50be9e6b738"
-}
-
 variable "profile" {
   description = "AWS Profile"
   default     = "default"
@@ -10,11 +6,6 @@ variable "profile" {
 variable "region" {
   description = "AWS region"
   default     = "eu-west-2"
-}
-
-variable "vpc_id" {
-  description = "AWS VPC ID"
-  default     = "vpc-065973d5fba18be83"
 }
 
 variable "subnet_cidrs" {
@@ -48,4 +39,26 @@ variable "passphrase" {
   type      = string
   default   = ""
   sensitive = true
+}
+
+variable "vpc_cidr" {
+  default = "10.20.0.0/16"
+}
+
+variable "public_sn_cidr" {
+  default = "10.20.10.0/24"
+}
+
+variable "subnet_cidrs_private" {
+  description = "Subnet CIDRs for public subnets (length must match configured availability_zones)"
+  # this could be further simplified / computed using cidrsubnet() etc.
+  # https://www.terraform.io/docs/configuration/interpolation.html#cidrsubnet-iprange-newbits-netnum-
+  default = ["10.20.20.0/24", "10.20.30.0/24", "10.20.40.0/24"]
+  type    = list(string)
+}
+
+variable "availability_zones" {
+  description = "AZs in this region to use"
+  default     = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+  type        = list(string)
 }

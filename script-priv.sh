@@ -23,7 +23,7 @@ export passphrase=$(aws ssm get-parameters --names ${passphrase_name} --with-dec
 cat >> ~ec2-user/.bash_profile <<EOF
 ## AWS Vault Stuff
 export AWS_ACCESS_KEY_ID=$${access_key} 
-export AWS_SECRET_ACCESS_KEY=$${access_key} 
+export AWS_SECRET_ACCESS_KEY=$${secret_key} 
 export AWS_VAULT_BACKEND=file 
 export AWS_VAULT_FILE_PASSPHRASE=$${passphrase}
 alias ee="aws-vault exec ee-test-account --"

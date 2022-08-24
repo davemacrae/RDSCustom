@@ -40,16 +40,16 @@ chmod +x aws-vault
 mv aws-vault /usr/local/bin
 
 # Get the AWS keys from the SSM Parameter Store
-export access_key=$(aws ssm get-parameters --names ${access_key_name} --with-decryption --query "Parameters[*].{Value:Value}" --output text)
-export secret_key=$(aws ssm get-parameters --names ${secret_key_name} --with-decryption --query "Parameters[*].{Value:Value}" --output text)
-export passphrase=$(aws ssm get-parameters --names ${passphrase_name} --with-decryption --query "Parameters[*].{Value:Value}" --output text)
+export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --names ${secret_key_name} --with-decryption --query "Parameters[*].{Value:Value}" --output text)
+export AWS_VAULT_FILE_PASSPHRASE=$(aws ssm get-parameters --names ${passphrase_name} --with-decryption --query "Parameters[*].{Value:Value}" --output text)
+export AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --names ${access_key_name} --with-decryption --query "Parameters[*].{Value:Value}" --output text)
 
 cat >> ~ec2-user/.bash_profile <<EOF
 ## AWS Vault Stuff
-export AWS_ACCESS_KEY_ID=$${access_key} 
-export AWS_SECRET_ACCESS_KEY=$${access_key} 
+export AWS_ACCESS_KEY_ID=$${AWS_ACCESS_KEY_ID} 
+export AWS_SECRET_ACCESS_KEY=$${AWS_SECRET_ACCESS_KEY} 
 export AWS_VAULT_BACKEND=file 
-export AWS_VAULT_FILE_PASSPHRASE=$${passphrase}
+export AWS_VAULT_FILE_PASSPHRASE=$${AWS_VAULT_FILE_PASSPHRASE}
 alias ee="aws-vault exec ee-test-account --"
 
 EOF
@@ -75,6 +75,6 @@ aws_account_id=equalexperts
 region=eu-west-2
 EOF
 
-HOME=~ec2-user AWS_ACCESS_KEY_ID=$${access_key} AWS_SECRET_ACCESS_KEY=$${secret_key} AWS_VAULT_BACKEND=file AWS_VAULT_FILE_PASSPHRASE=$${passphrase} /usr/local/bin/aws-vault add ee-master --env 
+HOME=~ec2-user AWS_VAULT_BACKEND=file /usr/local/bin/aws-vault add ee-master --env 
 sudo chown -R ec2-user.ec2-user ~ec2-user/.awsvault
 
