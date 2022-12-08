@@ -9,7 +9,7 @@ resource "aws_vpc" "this" {
 
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.this.id
-  cidr_block        = var.public_sn_cidr
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, 10)
   availability_zone = "eu-west-2a"
   tags = {
     "Name"  = "dmacrae-public"
@@ -47,16 +47,17 @@ resource "aws_route_table_association" "public" {
 # Create the Private subnets and Route Table
 
 resource "aws_subnet" "private" {
-  count = length(var.subnet_cidrs_private)
+
+  count = length(local.cidr_block)
 
   vpc_id            = aws_vpc.this.id
-  cidr_block        = var.subnet_cidrs_private[count.index]
+  cidr_block        = local.cidr_block[count.index]
   availability_zone = var.availability_zones[count.index]
-    tags = {
+
+  tags = {
     "Name"  = "dmacrae-private-${count.index}"
     "Owner" = "dmacrae"
   }
-
 }
 
 resource "aws_route_table" "private-rt" {

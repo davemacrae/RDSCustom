@@ -42,7 +42,7 @@ variable "passphrase" {
 }
 
 variable "vpc_cidr" {
-  default = "10.20.0.0/16"
+  default = "172.16.0.0/16"
 }
 
 variable "public_sn_cidr" {
@@ -57,8 +57,13 @@ variable "subnet_cidrs_private" {
   type    = list(string)
 }
 
+
 variable "availability_zones" {
   description = "AZs in this region to use"
   default     = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
   type        = list(string)
+}
+
+locals {
+  cidr_block = [cidrsubnet(var.vpc_cidr, 8, 20), cidrsubnet(var.vpc_cidr, 8, 30), cidrsubnet(var.vpc_cidr, 8, 40)]
 }
